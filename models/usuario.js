@@ -20,7 +20,7 @@ const UsuarioSchema = new Schema(
     },
     rol: {
       type: String,
-      required: true,      
+      required: true,
     },
     estado: {
       type: Boolean,
@@ -33,5 +33,10 @@ const UsuarioSchema = new Schema(
   },
   { timestamps: { createdAt: true, updatedAt: true } }
 );
+
+UsuarioSchema.methods.toJSON = function () {
+  const { __v, password, ...usuario } = this.toObject();
+  return usuario;
+};
 
 module.exports = model("Usuario", UsuarioSchema);

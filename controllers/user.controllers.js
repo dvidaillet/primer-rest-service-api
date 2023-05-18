@@ -14,9 +14,8 @@ const usuarioGet = (req, res = response) => {
 };
 
 const usuarioPost = async (req, res = response) => {
-  
-  const { nombre, correo, password, rol } = req.body;
-  const usuario = new Usuario({ nombre, correo, password, rol });
+  const { nombre, correo, password, rol, img } = req.body;
+  const usuario = new Usuario({ nombre, correo, password, rol, img });
 
   //comprobar si el correo existe
   const existeUsuario = await Usuario.findOne({ correo });
