@@ -10,7 +10,7 @@ const {
   usuarioPatch,
 } = require("../controllers/user.controllers");
 const { validarCampos } = require("../middlewares/validarCampos");
-const { validarRole } = require("../helpers/db-validators");
+const { validarRole, existeEmail } = require("../helpers/db-validators");
 
 router.get("/", usuarioGet);
 router.post(
@@ -18,6 +18,7 @@ router.post(
   [
     check("nombre", "El nombre es obligatorio").not().isEmpty(),
     check("correo", "El formato del correo es incorrecto").isEmail(),
+    check("correo").custom(existeEmail),
     check("password", "Minimo de 6 caracteres ").isLength({ min: 6 }),
     check("rol").custom(validarRole),
     validarCampos,
