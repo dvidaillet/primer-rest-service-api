@@ -1,7 +1,6 @@
 const { response } = require("express");
 const Usuario = require("../models/usuario");
 const bcryptjs = require("bcryptjs");
-const { validationResult } = require("express-validator");
 
 const usuarioGet = (req, res = response) => {
   const { q, name, apiKey } = req.query;

@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const router = Router();
+const Rol = require("../models/role");
 const { check } = require("express-validator");
 const {
   usuarioGet,
@@ -18,6 +19,12 @@ router.post(
     check("correo", "El formato del correo es incorrecto").isEmail(),
     check("password", "Minimo de 6 caracteres ").isLength({ min: 6 }),
     // check("rol", "Rol no valido ").isIn(["ADMIN_ROLE", "USER_ROLE"]),
+    check("role").custom(async (rol) => {
+      const existeRol = await Rol.findOne({ rol });
+      if (!existeRol) {
+        throw new Error(`El rol ${rol} no existe`);
+      }
+    }),
     validarCampos,
   ],
   usuarioPost
