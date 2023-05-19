@@ -41,17 +41,22 @@ const usuarioPost = async (req, res = response) => {
   });
 };
 
-const usuarioPut = (req, res) => {
+const usuarioPut = async (req, res) => {
   const { id } = req.params;
-  const { password, google, ...resto } = req.body;
+  const { _id, password, google, correo, ...resto } = req.body;
   // TODO: validar id contra bd
+  if (password) {
+    //encriptar password
+    const salt = bcryptjs.genSaltSync(12);
+    resto.password = bcryptjs.hashSync(password, salt);
+  }
 
-  
+  const usuario = await Usuario.findByIdAndUpdate(id, resto);
 
   res.json({
     ok: true,
     msg: "put ok usuario",
-    id,
+    usuario,
   });
 };
 const usuarioDelete = (req, res) => {
