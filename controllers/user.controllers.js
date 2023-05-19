@@ -43,6 +43,11 @@ const usuarioPost = async (req, res = response) => {
 
 const usuarioPut = (req, res) => {
   const { id } = req.params;
+  const { password, google, ...resto } = req.body;
+  // TODO: validar id contra bd
+
+  
+
   res.json({
     ok: true,
     msg: "put ok usuario",
