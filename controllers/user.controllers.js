@@ -3,30 +3,25 @@ const Usuario = require("../models/usuario");
 const bcryptjs = require("bcryptjs");
 const { existeEmail } = require("../helpers/db-validators");
 
-const usuarioGet = (req, res = response) => {
-  const { q, name, apiKey } = req.query;
+const usuarioGet = async (req, res = response) => {
+  const { limit = 5, desde = 0, apiKey } = req.query;
+  const activo = { estado: true };
+  /* const usuarios = await Usuario.find(activo).skip(desde).limit(limit);
+  const total = await Usuario.countDocuments(activo); */
+  const [total, usuarios] = await Promise.all([
+    Usuario.countDocuments(activo),
+    Usuario.find(activo).skip(desde).limit(limit),
+  ]);
+
   res.json({
-    ok: true,
-    msg: "get ok usuario",
-    q,
-    name,
-    apiKey,
+    total,
+    usuarios,
   });
 };
 
 const usuarioPost = async (req, res = response) => {
   const { nombre, correo, password, rol, img } = req.body;
   const usuario = new Usuario({ nombre, correo, password, rol, img });
-
-  //comprobar si el correo existe
-  // await existeEmail(correo);
-  /*  const existeUsuario = await Usuario.findOne({ correo });
-  if (existeUsuario) {
-    return res.status(401).json({
-      ok: false,
-      msg: "El correo ya esta registrado",
-    });
-  } */
 
   //encriptar password
   const salt = bcryptjs.genSaltSync(12);
@@ -36,7 +31,7 @@ const usuarioPost = async (req, res = response) => {
 
   res.status(201).json({
     ok: true,
-    msg: "post ok usuario",
+    msg: "Usuario actualizado",
     usuario,
   });
 };
@@ -44,7 +39,7 @@ const usuarioPost = async (req, res = response) => {
 const usuarioPut = async (req, res) => {
   const { id } = req.params;
   const { _id, password, google, correo, ...resto } = req.body;
-  // TODO: validar id contra bd
+
   if (password) {
     //encriptar password
     const salt = bcryptjs.genSaltSync(12);
@@ -59,10 +54,13 @@ const usuarioPut = async (req, res) => {
     usuario,
   });
 };
-const usuarioDelete = (req, res) => {
+const usuarioDelete = async (req, res) => {
+  const { id } = req.params;
+  const usuario = Usuario.findByIdAndUpdate(id, { estado: false });
   res.json({
     ok: true,
-    msg: "delete ok usuario",
+    msg: "Usuario Eliminado",
+    usuario,
   });
 };
 
